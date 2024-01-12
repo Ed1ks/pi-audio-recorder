@@ -7,7 +7,7 @@ import sys
 import time
 import traceback
 from multiprocessing import freeze_support
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # in Windows: pip install python-dotenv
 
 from lib.helper import get_timestamp
 
