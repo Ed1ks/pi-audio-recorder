@@ -32,10 +32,10 @@ def upload():
         print(f'Fileupload: {file}')
         try:
             webdav = easywebdav.connect(host=host, username=username, password=password, protocol='https')
-            webdav.upload(f'upload-pool/{file}', f'{root_path}/Predigten/{file}')
+            webdav.upload(f'upload-pool/{file}', f'{root_path}{file}')
             time.sleep(2)
             # verify upload
-            webdav_file_list = webdav.ls(f"{root_path}/Predigten/")
+            webdav_file_list = webdav.ls(f"{root_path}")
             webdav_file_list = [urllib.parse.unquote(x.name).split('/')[-1] for x in webdav_file_list]
 
             if file in webdav_file_list:

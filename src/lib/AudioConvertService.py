@@ -24,6 +24,13 @@ def convert():
 
     file_list: List[str] = next(os.walk('convert-pool'))[2]
 
+    normalize_audio = False
+    try:
+        normalize_audio = os.environ['NORMALIZE_AUDIO']
+        normalize_audio = True if normalize_audio is True else False
+    except (BaseException,):
+        pass
+
     for file in file_list:
 
         output_file_name = file.replace(".wav", ".mp3")
@@ -54,12 +61,14 @@ def convert():
                 # -ar 44100 = 44,1 kHz
                 # -q:a 2 = 170-210 kB/s mp3 bitrate
 
+                output_name = 'output_bn' if normalize_audio else 'output'
+
                 # in mp3 umwandeln
-                cmd = f'ffmpeg -y -i "{convert_pool_dir + file}" -vn -ar 44100 -q:a 2 "{convert_pool_dir}output_bn.mp3"'
+                cmd = f'ffmpeg -y -i "{convert_pool_dir + file}" -vn -ar 44100 -q:a 2 "{convert_pool_dir}{output_name}.mp3"'
                 return_value = subprocess.call(cmd, shell=True)
                 print('convert success')
 
-                if not return_value:
+                if not return_value and normalize_audio:
                     # Audio Lautstärke normalisieren:
                     print('Convert-Service: start audio-normalizing')
                     cmd = f'ffmpeg-normalize -c:a mp3 "{convert_pool_dir}output_bn.mp3" -o "{convert_pool_dir}output.mp3"'
@@ -82,10 +91,8 @@ def convert():
                 msg = f'Successfully Converted to file {output_file_name} (Output Size: {output_file_size_str}MB - Conv. Duration: {duration_str} sec)'
                 log(msg)
                 os.remove(convert_pool_dir + file)
-                # os.remove(convert_pool_dir + 'output_bn.mp3')
-
-                # move file
-                os.rename(f'{convert_pool_dir}output.mp3', f'{upload_pool_dir}{output_file_name}')
+                if normalize_audio:
+                    os.remove(convert_pool_dir + 'output_bn.mp3')
 
                 # set metadata
                 if len(output_file_name) >= 10:
@@ -97,7 +104,7 @@ def convert():
                         date_str, year_str = date_obj.strftime('%Y.%m.%d'), date_obj.strftime('%Y')
 
                         # Liste der Tags: https://from-locals.com/python-mutagen-mp3-id3/
-                        audio = EasyID3(f'{upload_pool_dir}{output_file_name}')
+                        audio = EasyID3(f'{convert_pool_dir}output.mp3')
                         audio['title'] = f"{date_obj.strftime('%Y-%m-%d')} "
                         audio['organization'] = u"Freie Bibelgemeinde Worpswede"
                         audio['language'] = u"German"
@@ -110,6 +117,9 @@ def convert():
                         audio.save()
                     except (BaseException,) as e:
                         log(e)
+
+                # move file
+                os.rename(f'{convert_pool_dir}output.mp3', f'{upload_pool_dir}{output_file_name}')
             except (Exception,) as e:
                 log(e)
 
