@@ -22,7 +22,7 @@ schnelles blinken = Fehler (wenn kein Mikrofon bei Aufnahmestart gefunden wird)
 * Ein Knopf mit Leuchte z.B. [diesen bei Amazon](https://www.amazon.de/dp/B07GB6Y1SZ?psc=1&ref=ppx_yo2ov_dt_b_product_details)
 
 ### Schaltung:
-![Schaltung.png](assets/Schaltung.png)
+![Schaltung.png](src/assets/Schaltung.png)
 
 # Develope
 
@@ -77,7 +77,7 @@ Wird die Aufnahme unerwartet unterbrochen, so wird beim nächsten Aufnahme-Start
 
 -> Mit Pycharm Professional (Teuer)
 1. Verbindung herstellen mit SSH (Putty muss installiert sein, falls key benutzt wird. Und private key muss im puttygen sein (dafür einfach key öffnen))
-2. Run -> Edit Configurations... -> Lokalen Ordner und Remote Ordner für Sync auswählen ![path-mapping.png](assets/path-mapping.png)
+2. Run -> Edit Configurations... -> Lokalen Ordner und Remote Ordner für Sync auswählen ![path-mapping.png](src/assets/path-mapping.png)
 
 ## Python Dependencies:
 * python3-pip
